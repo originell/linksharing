@@ -32,17 +32,14 @@ def user_links(request, username):
 @login_required
 def link_add(request):
     if request.method == 'POST':
-        form = LinkForm(request.POST)
+        form = LinkForm(request, request.POST)
         if form.is_valid():
-			# We need a custom save method to get the request.user
-            Link.objects.create(url=form.cleaned_data['url'],
-								description=form.cleaned_data['description'],
-								author=request.user)
+            form.save()
             return redirect(reverse('django_linksharing.views.user_index'))
         else:
-            form = LinkForm(request.POST)
+            form = LinkForm(request, request.POST)
     else:
-        form = LinkForm()
+        form = LinkForm(request)
     
     return render_to_response('django_linksharing/link_add.html',
                                 {'user': request.user,
