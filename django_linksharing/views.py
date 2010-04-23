@@ -34,7 +34,10 @@ def link_add(request):
     if request.method == 'POST':
         form = LinkForm(request.POST)
         if form.is_valid():
-            new_link = form.save()
+			# We need a custom save method to get the request.user
+            Link.objects.create(url=form.cleaned_data['url'],
+								description=form.cleaned_data['description'],
+								author=request.user)
             return redirect(reverse('django_linksharing.views.user_index'))
         else:
             form = LinkForm(request.POST)
